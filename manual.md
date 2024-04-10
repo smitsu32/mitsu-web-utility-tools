@@ -30,7 +30,8 @@
 |資料４ |400<br>450
 |資料５ |500
 
-(https://github.com/smitsu32/TestFile01)を参照
+(https://github.com/smitsu32/TestFile01
+)を参照
 <br>
 ## 画像の挿入
 ![標本木](img/hyouhongi.png)
