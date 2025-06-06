@@ -8,6 +8,7 @@ history = []
 last_action = None
 start_time = time.time()
 step_value = 1
+memory_slots = {1: 0, 2: 0, 3: 0}  # 3つのメモリスロット
 
 @app.route('/')
 def index():
@@ -84,13 +85,76 @@ def index():
         .btn-dec { background: linear-gradient(45deg, #f44336, #da190b); color: white; }
         .btn-reset { background: linear-gradient(45deg, #008CBA, #005f73); color: white; }
         .btn-step { background: linear-gradient(45deg, #ff9800, #e68900); color: white; }
-        .btn-quick { background: linear-gradient(45deg, #9c27b0, #7b1fa2); color: white; font-size: 1em; padding: 10px 20px; }
+        .btn-quick { background: linear-gradient(45deg, #9c27b0, #7b1fa2); color: white; font-size: 1.3em; padding: 15px 30px; min-width: 100px; }
         .quick-controls {
             display: flex;
             justify-content: center;
-            gap: 10px;
+            gap: 15px;
             margin: 15px 0;
             flex-wrap: wrap;
+        }
+        .memory-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+        }
+        .memory-section h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        .memory-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .memory-slot {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .memory-label {
+            font-weight: bold;
+            min-width: 80px;
+            font-size: 1.1em;
+        }
+        .btn-memory {
+            background: linear-gradient(45deg, #607d8b, #455a64);
+            color: white;
+            font-size: 0.9em;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-memory:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .btn-memory-clear {
+            background: linear-gradient(45deg, #e91e63, #c2185b);
+            color: white;
+            font-size: 1em;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 0 auto;
+        }
+        .btn-memory-clear:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.4);
         }
         .step-controls {
             display: flex;
@@ -175,18 +239,43 @@ def index():
             <button class="btn-reset" onclick="reset()">🔄 Reset</button>
         </div>
         
-        <div class="step-controls">
-            <span>Step:</span>
-            <input type="number" id="step" class="step-input" value="{{ step_value }}" min="1" max="1000" placeholder="1" onchange="updateStep()">
-            <button class="btn-step" onclick="addStep()">+ Step</button>
-            <button class="btn-step" onclick="subStep()">- Step</button>
-        </div>
-        
         <div class="quick-controls">
+            <button class="btn-quick" onclick="quickAdd(100)">+100</button>
             <button class="btn-quick" onclick="quickAdd(10)">+10</button>
             <button class="btn-quick" onclick="quickSub(10)">-10</button>
-            <button class="btn-quick" onclick="quickAdd(100)">+100</button>
             <button class="btn-quick" onclick="quickSub(100)">-100</button>
+        </div>
+        
+        <div class="step-controls">
+            <button class="btn-step" onclick="addStep()">+ Step</button>
+            <button class="btn-step" onclick="subStep()">- Step</button>
+            <input type="number" id="step" class="step-input" value="{{ step_value }}" min="1" max="1000" placeholder="1" onchange="updateStep()">
+            <span>Step</span>
+        </div>
+        
+        <div class="memory-section">
+            <h3>🧠 Memory</h3>
+            <div class="memory-controls">
+                <div class="memory-slot">
+                    <span class="memory-label">M1: {{ memory_slots[1] }}</span>
+                    <button class="btn-memory" onclick="memoryStore(1)">Store</button>
+                    <button class="btn-memory" onclick="memoryRecall(1)">Recall</button>
+                    <button class="btn-memory" onclick="memoryAdd(1)">M+</button>
+                </div>
+                <div class="memory-slot">
+                    <span class="memory-label">M2: {{ memory_slots[2] }}</span>
+                    <button class="btn-memory" onclick="memoryStore(2)">Store</button>
+                    <button class="btn-memory" onclick="memoryRecall(2)">Recall</button>
+                    <button class="btn-memory" onclick="memoryAdd(2)">M+</button>
+                </div>
+                <div class="memory-slot">
+                    <span class="memory-label">M3: {{ memory_slots[3] }}</span>
+                    <button class="btn-memory" onclick="memoryStore(3)">Store</button>
+                    <button class="btn-memory" onclick="memoryRecall(3)">Recall</button>
+                    <button class="btn-memory" onclick="memoryAdd(3)">M+</button>
+                </div>
+            </div>
+            <button class="btn-memory-clear" onclick="memoryClear()">Clear All Memory</button>
         </div>
         
         <div class="stats">
@@ -267,6 +356,22 @@ def index():
         function quickSub(amount) {
             fetch('/sub_step/' + amount, {method: 'POST'}).then(() => location.reload());
         }
+        
+        function memoryStore(slot) {
+            fetch('/memory_store/' + slot, {method: 'POST'}).then(() => location.reload());
+        }
+        
+        function memoryRecall(slot) {
+            fetch('/memory_recall/' + slot, {method: 'POST'}).then(() => location.reload());
+        }
+        
+        function memoryAdd(slot) {
+            fetch('/memory_add/' + slot, {method: 'POST'}).then(() => location.reload());
+        }
+        
+        function memoryClear() {
+            fetch('/memory_clear', {method: 'POST'}).then(() => location.reload());
+        }
     </script>
 </body>
 </html>
@@ -281,7 +386,8 @@ def index():
     elapsed_time=f"{hours:02d}:{minutes:02d}:{seconds:02d}",
     history=[format_history_item(h) for h in history],
     step_value=step_value,
-    start_time=start_time
+    start_time=start_time,
+    memory_slots=memory_slots
     )
 
 def get_status():
@@ -339,6 +445,38 @@ def sub_step(step):
 def update_step(step):
     global step_value
     step_value = step
+    return '', 204
+
+@app.route('/memory_store/<int:slot>', methods=['POST'])
+def memory_store(slot):
+    global memory_slots, counter
+    if slot in memory_slots:
+        memory_slots[slot] = counter
+        add_to_history(f'Store M{slot} = {counter}', counter)
+    return '', 204
+
+@app.route('/memory_recall/<int:slot>', methods=['POST'])
+def memory_recall(slot):
+    global memory_slots, counter
+    if slot in memory_slots:
+        old_value = counter
+        counter = memory_slots[slot]
+        add_to_history(f'Recall M{slot} = {counter} (was {old_value})', counter)
+    return '', 204
+
+@app.route('/memory_add/<int:slot>', methods=['POST'])
+def memory_add(slot):
+    global memory_slots, counter
+    if slot in memory_slots:
+        memory_slots[slot] += counter
+        add_to_history(f'M{slot}+ = {memory_slots[slot]} (+{counter})', counter)
+    return '', 204
+
+@app.route('/memory_clear', methods=['POST'])
+def memory_clear():
+    global memory_slots
+    memory_slots = {1: 0, 2: 0, 3: 0}
+    add_to_history('Clear all memory slots', counter)
     return '', 204
 
 @app.route('/reset', methods=['POST'])
