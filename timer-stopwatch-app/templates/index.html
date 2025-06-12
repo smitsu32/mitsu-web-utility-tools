@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⏱️ Timer & Stopwatch</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⏱️ Timer & Stopwatch</h1>
+            <div class="mode-toggle">
+                <button id="stopwatch-tab" class="tab-btn active">🕐 Stopwatch</button>
+                <button id="timer-tab" class="tab-btn">⏰ Timer</button>
+            </div>
+        </header>
+
+        <!-- Stopwatch Section -->
+        <div id="stopwatch-section" class="section active">
+            <div class="display-card">
+                <div class="time-display" id="stopwatch-display">00:00:00</div>
+                <div class="time-ms" id="stopwatch-ms">.000</div>
+            </div>
+            
+            <div class="controls">
+                <button id="stopwatch-start" class="btn btn-start">▶️ Start</button>
+                <button id="stopwatch-stop" class="btn btn-stop" disabled>⏸️ Stop</button>
+                <button id="stopwatch-lap" class="btn btn-lap" disabled>🏁 Lap</button>
+                <button id="stopwatch-reset" class="btn btn-reset">🔄 Reset</button>
+            </div>
+
+            <div class="lap-section" id="lap-section">
+                <h3>📊 Lap Times</h3>
+                <div class="lap-list" id="lap-list"></div>
+            </div>
+        </div>
+
+        <!-- Timer Section -->
+        <div id="timer-section" class="section">
+            <div class="timer-input">
+                <div class="input-group">
+                    <label>Hours</label>
+                    <input type="number" id="hours" min="0" max="23" value="0">
+                </div>
+                <div class="input-group">
+                    <label>Minutes</label>
+                    <input type="number" id="minutes" min="0" max="59" value="5">
+                </div>
+                <div class="input-group">
+                    <label>Seconds</label>
+                    <input type="number" id="seconds" min="0" max="59" value="0">
+                </div>
+            </div>
+
+            <div class="display-card">
+                <div class="time-display" id="timer-display">05:00</div>
+                <div class="progress-ring">
+                    <svg class="progress-ring-svg" width="200" height="200">
+                        <circle class="progress-ring-bg" cx="100" cy="100" r="90"></circle>
+                        <circle class="progress-ring-fill" cx="100" cy="100" r="90" id="progress-circle"></circle>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button id="timer-start" class="btn btn-start">▶️ Start</button>
+                <button id="timer-pause" class="btn btn-pause" disabled>⏸️ Pause</button>
+                <button id="timer-reset" class="btn btn-reset">🔄 Reset</button>
+            </div>
+
+            <div class="timer-finished" id="timer-finished">
+                <div class="finished-message">⏰ Time's Up!</div>
+                <audio id="timer-sound" preload="auto">
+                    <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMeAiaI0fPRgC4FJXbE8N+UQgwUWLPn4aZUFAlBm+TytmMeAiaJ0fHRgC0FJnTF8N2OSQ8UV7Pm36lUFAlBm+L0wGMeAiaJ0vDTgS4EJXTDzt+RTQ4VVrLo4qZVEw1Gltnx1mYgDSaK0e3TgyoiJHTDzd6RTg4UVbLk461WEQ5DmNjxy2MnDyWMy+3VgSwDJXbE8NyQTBwUWLDj4qxXFhFGltbtymAnDSiX0e3WiSkCJnfN8N2OS",
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  timer-stopwatch:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "5001:5000"
+    container_name: timer-stopwatch-app
+    restart: unless-stopped
+    environment:
+      - FLASK_ENV=production
