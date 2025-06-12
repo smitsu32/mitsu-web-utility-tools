@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  flask-counter:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "5000:5000"
+    container_name: flask-counter-app
+    restart: unless-stopped
+    environment:
+      - FLASK_ENV=production
