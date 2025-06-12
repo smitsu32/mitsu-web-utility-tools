@@ -1,4 +1,4 @@
-# 🎯 TestFile01 - Flask Web Applications Collection
+# 🛠️ Web Utility Tools - Flask Applications Collection
 
 [![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org)
 [![Flask](https://img.shields.io/badge/Flask-2.3+-green.svg)](https://flask.palletsprojects.com/)
@@ -23,7 +23,7 @@
 ## 📁 プロジェクト構造
 
 ```
-TestFile01/
+web-utility-tools/
 ├── flask-counter-app/          # カウンターアプリ
 │   ├── src/
 │   │   └── app.py             # メインアプリケーション
