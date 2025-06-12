@@ -18,7 +18,7 @@ class TimerStopwatch:
         self.timer_paused_time = 0
 
 timer_sw = TimerStopwatch()
-
+1
 @app.route('/')
 def index():
     return render_template('index.html')

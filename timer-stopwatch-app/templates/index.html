@@ -10,6 +10,10 @@
     <div class="container">
         <header>
             <h1>⏱️ Timer & Stopwatch</h1>
+            <div class="current-time-display">
+                <div class="current-time-label">Current Time</div>
+                <div id="current-time" class="current-time">00:00:00</div>
+            </div>
             <div class="mode-toggle">
                 <button id="stopwatch-tab" class="tab-btn active">🕐 Stopwatch</button>
                 <button id="timer-tab" class="tab-btn">⏰ Timer</button>
@@ -42,14 +46,26 @@
                 <div class="input-group">
                     <label>Hours</label>
                     <input type="number" id="hours" min="0" max="23" value="0">
+                    <div class="number-controls">
+                        <button type="button" class="spin-btn up" data-target="hours" data-action="increment"></button>
+                        <button type="button" class="spin-btn down" data-target="hours" data-action="decrement"></button>
+                    </div>
                 </div>
                 <div class="input-group">
                     <label>Minutes</label>
                     <input type="number" id="minutes" min="0" max="59" value="5">
+                    <div class="number-controls">
+                        <button type="button" class="spin-btn up" data-target="minutes" data-action="increment"></button>
+                        <button type="button" class="spin-btn down" data-target="minutes" data-action="decrement"></button>
+                    </div>
                 </div>
                 <div class="input-group">
                     <label>Seconds</label>
                     <input type="number" id="seconds" min="0" max="59" value="0">
+                    <div class="number-controls">
+                        <button type="button" class="spin-btn up" data-target="seconds" data-action="increment"></button>
+                        <button type="button" class="spin-btn down" data-target="seconds" data-action="decrement"></button>
+                    </div>
                 </div>
             </div>
 
@@ -67,6 +83,24 @@
                 <button id="timer-start" class="btn btn-start">▶️ Start</button>
                 <button id="timer-pause" class="btn btn-pause" disabled>⏸️ Pause</button>
                 <button id="timer-reset" class="btn btn-reset">🔄 Reset</button>
+            </div>
+
+            <div class="presets-section">
+                <h3>⚡ Quick Presets</h3>
+                <div class="presets-grid">
+                    <button class="preset-btn" data-time="30">30s</button>
+                    <button class="preset-btn" data-time="60">1m</button>
+                    <button class="preset-btn" data-time="180">3m</button>
+                    <button class="preset-btn" data-time="300">5m</button>
+                    <button class="preset-btn" data-time="600">10m</button>
+                    <button class="preset-btn" data-time="900">15m</button>
+                    <button class="preset-btn" data-time="1200">20m</button>
+                    <button class="preset-btn" data-time="1500">25m</button>
+                    <button class="preset-btn" data-time="1800">30m</button>
+                    <button class="preset-btn" data-time="2700">45m</button>
+                    <button class="preset-btn" data-time="3600">1h</button>
+                    <button class="preset-btn" data-time="7200">2h</button>
+                </div>
             </div>
 
             <div class="timer-finished" id="timer-finished">

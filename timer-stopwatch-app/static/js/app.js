@@ -2,11 +2,13 @@ class TimerStopwatchApp {
     constructor() {
         this.stopwatchInterval = null;
         this.timerInterval = null;
+        this.currentTimeInterval = null;
         this.currentTab = 'stopwatch';
         
         this.initializeElements();
         this.bindEvents();
         this.updateDisplay();
+        this.startCurrentTimeUpdate();
     }
 
     initializeElements() {
@@ -35,6 +37,9 @@ class TimerStopwatchApp {
         this.timerReset = document.getElementById('timer-reset');
         this.progressCircle = document.getElementById('progress-circle');
         this.timerFinished = document.getElementById('timer-finished');
+        
+        // Current time element
+        this.currentTimeElement = document.getElementById('current-time');
     }
 
     bindEvents() {
@@ -61,6 +66,24 @@ class TimerStopwatchApp {
         // Close timer finished modal
         this.timerFinished.addEventListener('click', () => {
             this.timerFinished.classList.remove('show');
+        });
+
+        // Preset buttons
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const seconds = parseInt(e.target.dataset.time);
+                this.setTimerFromSeconds(seconds);
+            });
+        });
+
+        // Custom spin buttons
+        document.querySelectorAll('.spin-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = e.target.dataset.target;
+                const action = e.target.dataset.action;
+                this.handleSpinButton(target, action);
+            });
         });
     }
 
@@ -119,7 +142,6 @@ class TimerStopwatchApp {
     async stopStopwatch() {
         try {
             const response = await fetch('/api/stopwatch/stop', { method: 'POST' });
-            const data = await response.json();
             
             this.stopwatchStart.disabled = false;
             this.stopwatchStop.disabled = true;
@@ -146,7 +168,6 @@ class TimerStopwatchApp {
     async resetStopwatch() {
         try {
             const response = await fetch('/api/stopwatch/reset', { method: 'POST' });
-            const data = await response.json();
             
             this.stopwatchStart.disabled = false;
             this.stopwatchStop.disabled = true;
@@ -181,6 +202,14 @@ class TimerStopwatchApp {
             const timeFormatted = this.formatTime(data.time);
             this.stopwatchDisplay.textContent = timeFormatted.display;
             this.stopwatchMs.textContent = timeFormatted.ms;
+            
+            // Update button states based on server response
+            if (!data.running && this.stopwatchInterval) {
+                this.stopwatchStart.disabled = false;
+                this.stopwatchStop.disabled = true;
+                this.stopwatchLap.disabled = true;
+                this.stopStopwatchInterval();
+            }
         } catch (error) {
             console.error('Error updating stopwatch display:', error);
         }
@@ -327,6 +356,50 @@ class TimerStopwatchApp {
         setTimeout(() => {
             this.timerFinished.classList.remove('show');
         }, 5000);
+    }
+
+    handleSpinButton(target, action) {
+        const input = document.getElementById(target);
+        let value = parseInt(input.value) || 0;
+        let min = parseInt(input.min) || 0;
+        let max = parseInt(input.max) || 59;
+
+        if (action === 'increment') {
+            value = value >= max ? min : value + 1;
+        } else if (action === 'decrement') {
+            value = value <= min ? max : value - 1;
+        }
+
+        input.value = value;
+        this.updateTimerDisplay();
+    }
+
+    setTimerFromSeconds(totalSeconds) {
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+
+        this.hoursInput.value = hours;
+        this.minutesInput.value = minutes;
+        this.secondsInput.value = seconds;
+
+        this.updateTimerDisplay();
+    }
+
+    startCurrentTimeUpdate() {
+        this.updateCurrentTime();
+        this.currentTimeInterval = setInterval(() => {
+            this.updateCurrentTime();
+        }, 1000);
+    }
+
+    updateCurrentTime() {
+        const now = new Date();
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const seconds = now.getSeconds().toString().padStart(2, '0');
+        
+        this.currentTimeElement.textContent = `${hours}:${minutes}:${seconds}`;
     }
 
     updateDisplay() {
